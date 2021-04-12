@@ -17,10 +17,13 @@ Regardless of the type of build you choose, Webpack will put all the files insid
 ## Running the application
 
 To run mock (express) server:
-npm run express
+
+    npm run express
 
 To run frontend separately:
-npm run dev
+
+    npm run dev
 
 To run server and frontend in production mode:
-npm run start
+
+    npm run start
