@@ -1,13 +1,9 @@
 import * as React from 'react'
-import { IStateApp } from '../../types'
-import { setDummy } from '../../redux/actions'
-import { useDispatch, useSelector } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import styles from './app.module.scss'
 
-const App = (): React.ReactElement => {
-  const dispatch = useDispatch()
-  const dummy = useSelector((state: IStateApp) => state.statics.dummy)
+const App = () => {
+  const [dummy, setDummy] = React.useState<any>({})
 
   return (
     <div className={styles.app}>
@@ -17,7 +13,7 @@ const App = (): React.ReactElement => {
           const index = dummy ? Object.keys(dummy).length : 0
           const copyDummy = dummy ? JSON.parse(JSON.stringify(dummy)) : {}
           copyDummy[`prop${index}`] = index
-          dispatch(setDummy(copyDummy))
+          setDummy(copyDummy)
         }}>
         Set dummy
       </button>

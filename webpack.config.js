@@ -120,23 +120,6 @@ module.exports = (env, argv) => {
         },
         {
           enforce: 'pre',
-          loader: 'eslint-loader',
-          options: {
-            configuration: {
-              rules: {
-                quotemark: [true, 'single', 'jsx-double']
-              }
-            },
-            configFile: path.join(__dirname, '.eslintrc.js'),
-            emitWarning: argv.mode === 'development',
-            failOnWarning: argv.mode === 'production',
-            fix: argv.mode === 'production',
-            tsConfigFile: 'tsconfig.json'
-          },
-          test: /\.tsx$/
-        },
-        {
-          enforce: 'pre',
           test: /\.js$/,
           loader: 'source-map-loader'
         }
@@ -147,15 +130,40 @@ module.exports = (env, argv) => {
     },
     plugins: [
       new Dotenv(),
-      new ESLintPlugin({
-        fix: true,
-        extensions: ['js', 'ts', 'tsx']
-      }),
       new PrettierPlugin({
         extensions: ['js', 'ts', 'tsx']
       }),
       new StylelintPlugin({ files: './src/**/*.{,s}css', fix: argv.mode === 'development' })
     ]
+  }
+
+  if (process.env.MODE === 'ts') {
+    console.log('Using ts linter')
+    config.module.rules.push({
+      enforce: 'pre',
+      loader: 'eslint-loader',
+      options: {
+        configuration: {
+          rules: {
+            quotemark: [true, 'single', 'jsx-double']
+          }
+        },
+        configFile: path.join(__dirname, '.eslintrc.js'),
+        emitWarning: argv.mode === 'development',
+        failOnWarning: argv.mode === 'production',
+        fix: argv.mode === 'production',
+        tsConfigFile: 'tsconfig.json'
+      },
+      test: /\.tsx$/
+    })
+    config.plugins.push(
+      new ESLintPlugin({
+        fix: true,
+        extensions: ['js', 'ts', 'tsx']
+      })
+    )
+  } else {
+    console.log('NOT using ts linter')
   }
 
   if (argv.mode === 'production') {
@@ -198,24 +206,6 @@ module.exports = (env, argv) => {
     }
     config.devtool = 'source-map'
   } else {
-    config.module.rules.push({
-      enforce: 'pre',
-      loader: 'eslint-loader',
-      options: {
-        configuration: {
-          rules: {
-            quotemark: [true, 'single', 'jsx-double']
-          }
-        },
-        configFile: path.join(__dirname, '.eslintrc.js'),
-        emitWarning: argv.mode === 'development',
-        failOnWarning: argv.mode === 'production',
-        fix: true,
-        tsConfigFile: 'tsconfig.json'
-      },
-      test: /\.tsx$/
-    })
-
     config.output.filename = '[name].js'
 
     config.devtool = 'eval-source-map'
